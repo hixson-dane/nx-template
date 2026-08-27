@@ -8,6 +8,12 @@
     },
     {
       "path": "./packages/resources/knowledge-graph/knowledge-graph-api"
+    },
+    {
+      "path": "./packages/resources/knowledge-graph/knowledge-graph-ui-e2e"
+    },
+    {
+      "path": "./packages/resources/knowledge-graph/knowledge-graph-ui"
     }
   ],
   "compilerOptions": {}
