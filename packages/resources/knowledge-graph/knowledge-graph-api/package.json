@@ -111,6 +111,7 @@
     }
   },
   "dependencies": {
+    "@dev-portal/knowledge-graph-models": "^0.0.1",
     "express": "^5.1.0"
   }
 }

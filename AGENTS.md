@@ -21,3 +21,12 @@
 - The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
 
 <!-- nx configuration end-->
+
+<!-- GitHub Copilot generated content - start -->
+
+## Local Skills
+
+- For Express API endpoint creation or refactors, invoke the `repo-organization` skill in `.agents/skills/repo-organization/SKILL.md`.
+- Follow `.agents/skills/repo-organization/repo-organization.md` for feature-first layout guidance (`features/<feature>/controller.ts`, `features/<feature>/service.ts`, `features/repository.ts`, `features/<feature>/test.spec.ts`, and `shared/`).
+
+<!-- GitHub Copilot generated content - end -->

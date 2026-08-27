@@ -17,6 +17,9 @@
     },
     {
       "path": "./packages/resources/knowledge-graph/knowledge-graph-models"
+    },
+    {
+      "path": "./packages/resources/knowledge-graph/knowledge-graph-sdk"
     }
   ],
   "compilerOptions": {}

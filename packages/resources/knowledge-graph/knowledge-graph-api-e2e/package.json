@@ -18,7 +18,7 @@
           "knowledge-graph-api:serve"
         ],
         "options": {
-          "jestConfig": "packages/resources/knowledge-graph/knowledge-graph-api-e2e/jest.config.cts",
+          "jestConfig": "packages/resources/knowledge-graph/knowledge-graph-api-e2e/jest.config.cjs",
           "passWithNoTests": true
         }
       }
