@@ -17,6 +17,7 @@ import { ApiGeneratorSchema } from './schema';
 const TEMPLATE_RESOURCE_NAME = 'knowledge-graph';
 const TEMPLATE_FEATURE_NAME = 'ping';
 const RESOURCE_NAME_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const API_NAME_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const FEATURE_NAME_PATTERN = /^[a-z][a-zA-Z0-9]*$/;
 const SCOPE_PATTERN = /^@[a-z0-9][a-z0-9-]*$/;
 const DEFAULT_VERSION = '0.0.1';
@@ -24,6 +25,7 @@ const DEFAULT_VERSION = '0.0.1';
 interface NormalizedOptions {
   resourceName: string;
   resourceNamePascal: string;
+  apiName: string;
   featureName: string;
   featureNamePascal: string;
   scope: string;
@@ -87,10 +89,27 @@ export async function apiGenerator(
 export default apiGenerator;
 
 function normalizeOptions(schema: ApiGeneratorSchema): NormalizedOptions {
-  const resourceName = names(schema.name).fileName;
+  const rawResourceName = schema.resourceName?.trim();
+  if (!rawResourceName) {
+    throw new Error('resourceName is required.');
+  }
+
+  const resourceName = names(rawResourceName).fileName;
   if (!RESOURCE_NAME_PATTERN.test(resourceName)) {
     throw new Error(
-      `The resource name must be kebab-case. Received "${schema.name}".`
+      `The resource name must be kebab-case. Received "${schema.resourceName}".`
+    );
+  }
+
+  const rawApiName = schema.apiName?.trim();
+  if (!rawApiName) {
+    throw new Error('apiName is required.');
+  }
+
+  const normalizedApiName = stripApiSuffix(names(rawApiName).fileName);
+  if (!API_NAME_PATTERN.test(normalizedApiName)) {
+    throw new Error(
+      `The api name must be kebab-case. Received "${schema.apiName}".`
     );
   }
 
@@ -116,13 +135,18 @@ function normalizeOptions(schema: ApiGeneratorSchema): NormalizedOptions {
   const resourceRoot = joinPathFragments(directory, resourceName);
   const templateRoot = joinPathFragments(directory, TEMPLATE_RESOURCE_NAME);
 
-  const apiProject = `${resourceName}-api`;
-  const apiE2eProject = `${resourceName}-api-e2e`;
+  const apiProjectStem =
+    normalizedApiName === resourceName
+      ? resourceName
+      : `${resourceName}-${normalizedApiName}`;
+  const apiProject = `${apiProjectStem}-api`;
+  const apiE2eProject = `${apiProjectStem}-api-e2e`;
   const modelsProject = `${resourceName}-models`;
 
   return {
     resourceName,
     resourceNamePascal: names(resourceName).className,
+    apiName: normalizedApiName,
     featureName,
     featureNamePascal: names(featureName).className,
     scope,
@@ -138,6 +162,14 @@ function normalizeOptions(schema: ApiGeneratorSchema): NormalizedOptions {
     modelsProject,
     modelsRoot: joinPathFragments(resourceRoot, modelsProject),
   };
+}
+
+function stripApiSuffix(value: string): string {
+  if (value === 'api') {
+    return value;
+  }
+
+  return value.endsWith('-api') ? value.slice(0, -4) : value;
 }
 
 function normalizePort(value: number): number {

@@ -5,12 +5,20 @@
   "description": "Scaffold api and api-e2e projects for a resource, and reuse or create matching models.",
   "type": "object",
   "properties": {
-    "name": {
+    "resourceName": {
       "type": "string",
       "description": "Resource name in kebab-case.",
       "$default": {
         "$source": "argv",
         "index": 0
+      }
+    },
+    "apiName": {
+      "type": "string",
+      "description": "API name in kebab-case (without resource prefix).",
+      "$default": {
+        "$source": "argv",
+        "index": 1
       }
     },
     "scope": {
@@ -39,6 +47,6 @@
       "default": false
     }
   },
-  "required": ["name"],
+  "required": ["resourceName", "apiName"],
   "additionalProperties": false
 }

@@ -1,6 +1,7 @@
 // GitHub Copilot generated code - start
 export interface ApiGeneratorSchema {
-  name: string;
+  resourceName: string;
+  apiName: string;
   scope?: string;
   featureName?: string;
   directory?: string;
