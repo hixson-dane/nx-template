@@ -8,6 +8,11 @@
       "schema": "./src/generators/api/schema.json",
       "description": "Scaffold api and api-e2e projects for a resource with ping endpoint structure."
     },
+    "api-feature": {
+      "factory": "./src/generators/api-feature/generator",
+      "schema": "./src/generators/api-feature/schema.json",
+      "description": "Add a new feature set to an existing API project, including route and model wiring."
+    },
     "resource": {
       "factory": "./src/generators/resource/generator",
       "schema": "./src/generators/resource/schema.json",

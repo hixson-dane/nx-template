@@ -22,6 +22,12 @@ Use the local generator `@org/nx-resource:resource` to create a deterministic re
 npm exec nx -- generate @org/nx-resource:resource <resource-name> --no-interactive
 ```
 
+Add a feature to an existing API project:
+
+```bash
+npm exec nx -- generate @org/nx-resource:api-feature <api-project> <feature-name> --no-interactive
+```
+
 Defaults:
 
 - `featureName=ping`
@@ -54,6 +60,7 @@ npm exec nx -- generate @org/nx-resource:resource inventory --apiPort=3100 --uiP
 
 ```bash
 npm exec nx -- generate @org/nx-resource:resource <resource-name> --dry-run --no-interactive
+npm exec nx -- generate @org/nx-resource:api-feature <api-project> <feature-name> --dry-run --no-interactive
 ```
 
 Review that the generator creates these projects:
