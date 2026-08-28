@@ -20,6 +20,24 @@
     },
     {
       "path": "./packages/resources/knowledge-graph/knowledge-graph-sdk"
+    },
+    {
+      "path": "./packages/resources/schema/schema-api-e2e"
+    },
+    {
+      "path": "./packages/resources/schema/schema-api"
+    },
+    {
+      "path": "./packages/resources/schema/schema-models"
+    },
+    {
+      "path": "./packages/resources/schema/schema-sdk"
+    },
+    {
+      "path": "./packages/resources/schema/schema-ui-e2e"
+    },
+    {
+      "path": "./packages/resources/schema/schema-ui"
     }
   ],
   "compilerOptions": {}

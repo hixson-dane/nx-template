@@ -306,6 +306,9 @@ function resetGeneratedSourceTrees(tree: Tree, options: NormalizedOptions): void
   deleteIfExists(tree, joinPathFragments(options.apiE2eRoot, 'jest.config.cts'));
   deleteIfExists(tree, joinPathFragments(options.sdkRoot, 'jest.config.ts'));
   deleteIfExists(tree, joinPathFragments(options.sdkRoot, 'jest.config.cts'));
+  deleteIfExists(tree, joinPathFragments(options.uiRoot, 'jest.config.ts'));
+  deleteIfExists(tree, joinPathFragments(options.uiRoot, 'jest.config.cts'));
+  deleteIfExists(tree, joinPathFragments(options.uiRoot, 'jest.config.cjs'));
 
   deleteIfExists(tree, joinPathFragments(options.uiRoot, 'vite.config.ts'));
   deleteIfExists(tree, joinPathFragments(options.uiRoot, 'vite.config.cts'));
@@ -420,7 +423,7 @@ function getCanonicalTemplateInstructions(
 
     { from: 'knowledge-graph-ui/eslint.config.mjs', to: `${options.uiProject}/eslint.config.mjs` },
     { from: 'knowledge-graph-ui/index.html', to: `${options.uiProject}/index.html` },
-    { from: 'knowledge-graph-ui/jest.config.cts', to: `${options.uiProject}/jest.config.cts` },
+    { from: 'knowledge-graph-ui/jest.config.cts', to: `${options.uiProject}/jest.config.cjs` },
     { from: 'knowledge-graph-ui/package.json', to: `${options.uiProject}/package.json` },
     { from: 'knowledge-graph-ui/tsconfig.app.json', to: `${options.uiProject}/tsconfig.app.json` },
     { from: 'knowledge-graph-ui/tsconfig.json', to: `${options.uiProject}/tsconfig.json` },
@@ -464,6 +467,7 @@ function buildReplacements(
     ['knowledge-graph-sdk', options.sdkProject],
     ['knowledge-graph-ui-e2e', options.uiE2eProject],
     ['knowledge-graph-ui', options.uiProject],
+    ['jest.config.cts', 'jest.config.cjs'],
     ['KnowledgeGraph', options.resourceNamePascal],
     ['Ping', options.featureNamePascal],
     ['ping', options.featureName],

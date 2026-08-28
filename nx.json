@@ -41,7 +41,8 @@
         "targetName": "test"
       },
       "exclude": [
-        "packages/resources/*/*-api-e2e/**/*"
+        "packages/resources/*/*-api-e2e/**/*",
+        "packages/resources/schema/schema-api-e2e/**/*"
       ]
     },
     {
@@ -98,6 +99,10 @@
       ]
     },
     "test": {
+      "dependsOn": ["^build"]
+    },
+    "build": {
+      "cache": true,
       "dependsOn": ["^build"]
     }
   },
