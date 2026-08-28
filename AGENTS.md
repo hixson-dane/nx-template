@@ -28,5 +28,6 @@
 
 - For Express API endpoint creation or refactors, invoke the `repo-organization` skill in `.agents/skills/repo-organization/SKILL.md`.
 - Follow `.agents/skills/repo-organization/repo-organization.md` for feature-first layout guidance (`features/<feature>/controller.ts`, `features/<feature>/service.ts`, `features/repository.ts`, `features/<feature>/test.spec.ts`, and `shared/`).
+- For deterministic resource scaffolding (api, api-e2e, models, sdk, ui, ui-e2e), invoke the `nx-resource` skill in `.agents/skills/nx-resource/SKILL.md`.
 
 <!-- GitHub Copilot generated content - end -->

@@ -68,7 +68,7 @@
   },
   "workspaces": [
     "packages/*",
-    "packages/resources/knowledge-graph/*"
+    "packages/resources/*/*"
   ],
   "nx": {
     "includedScripts": [],

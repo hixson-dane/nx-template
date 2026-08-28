@@ -41,7 +41,7 @@
         "targetName": "test"
       },
       "exclude": [
-        "packages/resources/knowledge-graph/knowledge-graph-api-e2e/**/*"
+        "packages/resources/*/*-api-e2e/**/*"
       ]
     },
     {

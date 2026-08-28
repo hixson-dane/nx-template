@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "NxResourceGenerator",
+  "title": "Nx Resource Generator",
+  "description": "Scaffold api, api-e2e, models, sdk, ui, and ui-e2e projects for a resource.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Resource name in kebab-case.",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      }
+    },
+    "scope": {
+      "type": "string",
+      "description": "Workspace package scope (for example @org).",
+      "default": "@org"
+    },
+    "featureName": {
+      "type": "string",
+      "description": "Seed feature name for api and sdk.",
+      "default": "ping"
+    },
+    "directory": {
+      "type": "string",
+      "description": "Base directory where resources live.",
+      "default": "packages/resources"
+    },
+    "apiPort": {
+      "type": "number",
+      "description": "Default api runtime port.",
+      "default": 3000
+    },
+    "uiPort": {
+      "type": "number",
+      "description": "Default ui dev and preview port.",
+      "default": 4200
+    },
+    "skipFormat": {
+      "type": "boolean",
+      "description": "Skip file formatting.",
+      "default": false
+    }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}
