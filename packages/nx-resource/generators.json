@@ -3,6 +3,11 @@
   "name": "@org/nx-resource",
   "version": "0.0.1",
   "generators": {
+    "api": {
+      "factory": "./src/generators/api/generator",
+      "schema": "./src/generators/api/schema.json",
+      "description": "Scaffold api and api-e2e projects for a resource with ping endpoint structure."
+    },
     "resource": {
       "factory": "./src/generators/resource/generator",
       "schema": "./src/generators/resource/schema.json",
