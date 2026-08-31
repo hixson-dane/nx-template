@@ -6,17 +6,17 @@
     "api": {
       "factory": "./src/generators/api/generator",
       "schema": "./src/generators/api/schema.json",
-      "description": "Scaffold api and api-e2e projects for a resource with ping endpoint structure."
+      "description": "Scaffold api and api-e2e projects for a resource with embedded canonical templates and optional templateRoot override."
     },
     "api-feature": {
       "factory": "./src/generators/api-feature/generator",
       "schema": "./src/generators/api-feature/schema.json",
-      "description": "Add a new feature set to an existing API project, including route and model wiring."
+      "description": "Add a new feature set to an existing API project, including route and model wiring, using embedded feature templates by default."
     },
     "resource": {
       "factory": "./src/generators/resource/generator",
       "schema": "./src/generators/resource/schema.json",
-      "description": "Scaffold a full resource stack (api, api-e2e, models, sdk, ui, ui-e2e)."
+      "description": "Scaffold a full resource stack (api, api-e2e, models, sdk, ui, ui-e2e) from embedded canonical templates."
     }
   }
 }

@@ -13,6 +13,10 @@ import { libraryGenerator as jsLibraryGenerator } from '@nx/js';
 import { applicationGenerator as nodeApplicationGenerator } from '@nx/node';
 
 import { ApiGeneratorSchema } from './schema';
+import {
+  ensureTemplateRootExists,
+  resolveTemplateRoot,
+} from '../shared/template-root';
 
 const TEMPLATE_RESOURCE_NAME = 'knowledge-graph';
 const TEMPLATE_FEATURE_NAME = 'ping';
@@ -133,7 +137,10 @@ function normalizeOptions(schema: ApiGeneratorSchema): NormalizedOptions {
 
   const apiPort = normalizePort(schema.apiPort ?? 3000);
   const resourceRoot = joinPathFragments(directory, resourceName);
-  const templateRoot = joinPathFragments(directory, TEMPLATE_RESOURCE_NAME);
+  const templateRoot = resolveTemplateRoot(
+    schema.templateRoot,
+    TEMPLATE_RESOURCE_NAME
+  );
 
   const apiProjectStem =
     normalizedApiName === resourceName
@@ -181,14 +188,7 @@ function normalizePort(value: number): number {
 }
 
 function ensureCanonicalTemplateExists(tree: Tree, options: NormalizedOptions): void {
-  if (!tree.exists(options.templateRoot)) {
-    throw new Error(
-      [
-        `Canonical template resource not found at "${options.templateRoot}".`,
-        `This generator expects an existing "${TEMPLATE_RESOURCE_NAME}" resource as the deterministic source template.`,
-      ].join(' ')
-    );
-  }
+  ensureTemplateRootExists(tree, options.templateRoot, TEMPLATE_RESOURCE_NAME);
 }
 
 function ensureApiProjectsDoNotExist(tree: Tree, options: NormalizedOptions): void {
@@ -226,6 +226,9 @@ function ensureDeterministicWorkspaceConfig(tree: Tree): void {
       return json;
     }
 
+    const resourceApiE2ePattern =
+      /^packages\/resources\/[^/]+\/[^/]+-api-e2e\/\*\*\/\*$/;
+
     json.plugins = json.plugins.map((plugin: string | Record<string, unknown>) => {
       if (
         typeof plugin !== 'object' ||
@@ -238,7 +241,9 @@ function ensureDeterministicWorkspaceConfig(tree: Tree): void {
         ? (plugin['exclude'] as string[])
         : [];
       const normalized = existingExclude.filter(
-        (entry) => entry !== 'packages/resources/knowledge-graph/knowledge-graph-api-e2e/**/*'
+        (entry) =>
+          entry !== 'packages/resources/knowledge-graph/knowledge-graph-api-e2e/**/*' &&
+          !resourceApiE2ePattern.test(entry)
       );
 
       if (!normalized.includes('packages/resources/*/*-api-e2e/**/*')) {
@@ -390,7 +395,7 @@ function getCanonicalTemplateInstructions(
     { from: 'knowledge-graph-api/Dockerfile', to: `${options.apiProject}/Dockerfile` },
     { from: 'knowledge-graph-api/eslint.config.mjs', to: `${options.apiProject}/eslint.config.mjs` },
     { from: 'knowledge-graph-api/jest.config.cjs', to: `${options.apiProject}/jest.config.cjs` },
-    { from: 'knowledge-graph-api/package.json', to: `${options.apiProject}/package.json` },
+    { from: 'knowledge-graph-api/package.template.json', to: `${options.apiProject}/package.json` },
     { from: 'knowledge-graph-api/tsconfig.app.json', to: `${options.apiProject}/tsconfig.app.json` },
     { from: 'knowledge-graph-api/tsconfig.json', to: `${options.apiProject}/tsconfig.json` },
     { from: 'knowledge-graph-api/tsconfig.spec.json', to: `${options.apiProject}/tsconfig.spec.json` },
@@ -415,7 +420,7 @@ function getCanonicalTemplateInstructions(
     { from: 'knowledge-graph-api-e2e/.spec.swcrc', to: `${options.apiE2eProject}/.spec.swcrc` },
     { from: 'knowledge-graph-api-e2e/eslint.config.mjs', to: `${options.apiE2eProject}/eslint.config.mjs` },
     { from: 'knowledge-graph-api-e2e/jest.config.cjs', to: `${options.apiE2eProject}/jest.config.cjs` },
-    { from: 'knowledge-graph-api-e2e/package.json', to: `${options.apiE2eProject}/package.json` },
+    { from: 'knowledge-graph-api-e2e/package.template.json', to: `${options.apiE2eProject}/package.json` },
     { from: 'knowledge-graph-api-e2e/tsconfig.json', to: `${options.apiE2eProject}/tsconfig.json` },
     {
       from: 'knowledge-graph-api-e2e/src/knowledge-graph-api/knowledge-graph-api.spec.ts',
@@ -438,7 +443,7 @@ function getCanonicalTemplateInstructions(
   if (modelsState.shouldCreate) {
     instructions.push(
       { from: 'knowledge-graph-models/eslint.config.mjs', to: `${options.modelsProject}/eslint.config.mjs` },
-      { from: 'knowledge-graph-models/package.json', to: `${options.modelsProject}/package.json` },
+      { from: 'knowledge-graph-models/package.template.json', to: `${options.modelsProject}/package.json` },
       { from: 'knowledge-graph-models/README.md', to: `${options.modelsProject}/README.md` },
       { from: 'knowledge-graph-models/tsconfig.json', to: `${options.modelsProject}/tsconfig.json` },
       { from: 'knowledge-graph-models/tsconfig.lib.json', to: `${options.modelsProject}/tsconfig.lib.json` },
@@ -468,6 +473,8 @@ function buildReplacements(
     ['knowledge-graph-api-e2e', options.apiE2eProject],
     ['knowledge-graph-api', options.apiProject],
     ['knowledge-graph-models', options.modelsProject],
+    ['../../../../../tsconfig.base.json', '../../../../tsconfig.base.json'],
+    ['../../../../../jest.preset.js', '../../../../jest.preset.js'],
     ['jest.config.cts', 'jest.config.cjs'],
     ['KnowledgeGraph', options.resourceNamePascal],
     ['Ping', options.featureNamePascal],
@@ -513,6 +520,10 @@ function enforcePackageMetadata(
     json.private = true;
     json.nx ??= {};
     json.nx.name = options.apiProject;
+    const scripts = toRecord(json.scripts);
+    scripts.build = 'tsc --build tsconfig.app.json';
+    scripts.serve = 'node dist/main.js';
+    json.scripts = sortRecord(scripts);
     json.dependencies = sortRecord({
       [modelsState.packageName]: modelsDependencyVersion,
       express: expressVersion,

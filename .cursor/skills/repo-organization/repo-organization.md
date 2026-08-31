@@ -74,8 +74,8 @@ Use a dedicated models workspace package for API contracts so schema, runtime va
 
 Contract placement:
 
-- Define request and response schemas in `knowledge-graph-models/src/lib/*.ts` with Zod.
-- Export schema values and inferred types from `knowledge-graph-models/src/index.ts`.
+- Define request and response schemas in `<resource>-models/src/lib/*.ts` with Zod.
+- Export schema values and inferred types from `<resource>-models/src/index.ts`.
 
 Controller usage:
 
@@ -91,7 +91,7 @@ SDK usage:
 
 - Parse API payloads with the same shared response schemas.
 - Re-export request and response TypeScript types through `features/<feature>/models.ts`.
-- Prefer `export type { ... } from '@dev-portal/knowledge-graph-models'` in SDK models files.
+- Prefer `export type { ... } from '@<scope>/<resource>-models'` in SDK models files.
 - Do not re-export Zod schemas from SDK models files unless SDK consumers require runtime schema parsing.
 
 Dependency wiring:

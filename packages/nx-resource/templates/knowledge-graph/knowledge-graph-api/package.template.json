@@ -1,0 +1,9 @@
+{
+  "name": "@org/knowledge-graph-api",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@dev-portal/knowledge-graph-models": "^0.0.1",
+    "express": "^5.1.0"
+  }
+}

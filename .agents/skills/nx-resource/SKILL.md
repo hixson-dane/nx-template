@@ -7,13 +7,14 @@ description: Scaffold a full resource stack (api, api-e2e, models, sdk, ui, ui-e
 # Nx Resource Generator
 
 Use the local generator `@org/nx-resource:resource` to create a deterministic resource workspace under `packages/resources/<resource-name>`.
+The generator uses embedded canonical templates from `packages/nx-resource/templates/knowledge-graph` by default, so it works in raw repos without a pre-existing `packages/resources/knowledge-graph` template.
 
 ## Key Principles
 
 1. Always run with `--no-interactive`.
 2. Always run `--dry-run` first to validate file placement.
 3. Use one workspace scope for all generated packages (default `@org`).
-4. Prefer this skill over hand-copying `knowledge-graph`.
+4. Prefer this skill over hand-copying any existing resource template.
 5. Validate generated projects with Nx build and test targets.
 
 ## Command
@@ -33,6 +34,7 @@ Defaults:
 - `featureName=ping`
 - `scope=@org`
 - `directory=packages/resources`
+- `templateRoot=packages/nx-resource/templates/knowledge-graph` (implicit default)
 - `apiPort=3000`
 - `uiPort=4200`
 
@@ -61,6 +63,12 @@ npm exec nx -- generate @org/nx-resource:resource inventory --apiPort=3100 --uiP
 ```bash
 npm exec nx -- generate @org/nx-resource:resource <resource-name> --dry-run --no-interactive
 npm exec nx -- generate @org/nx-resource:api-feature <api-project> <feature-name> --dry-run --no-interactive
+```
+
+Optional advanced override:
+
+```bash
+npm exec nx -- generate @org/nx-resource:resource <resource-name> --templateRoot=packages/resources/knowledge-graph --no-interactive
 ```
 
 Review that the generator creates these projects:
@@ -92,7 +100,7 @@ npm exec nx -- show project <resource>-api --json
 
 ## Anti-Patterns
 
-- Do not clone `knowledge-graph` manually for new resources.
+- Do not clone a canonical template directory manually for new resources.
 - Do not manually edit root workspaces for each new resource.
 - Do not mix package scopes inside one generated resource unless explicitly requested.
 <!-- GitHub Copilot generated content - end -->

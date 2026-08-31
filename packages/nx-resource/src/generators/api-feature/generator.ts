@@ -10,6 +10,10 @@ import {
 } from '@nx/devkit';
 
 import { ApiFeatureGeneratorSchema } from './schema';
+import {
+  ensureTemplateRootExists,
+  resolveTemplateRoot,
+} from '../shared/template-root';
 
 const TEMPLATE_RESOURCE_NAME = 'knowledge-graph';
 const TEMPLATE_FEATURE_NAME = 'ping';
@@ -20,6 +24,7 @@ interface NormalizedOptions {
   featureName: string;
   featureNamePascal: string;
   skipFormat: boolean;
+  templateRoot: string;
   templateApiRoot: string;
   templateFeatureRoot: string;
 }
@@ -84,19 +89,23 @@ function normalizeOptions(schema: ApiFeatureGeneratorSchema): NormalizedOptions 
     );
   }
 
+  const templateRoot = resolveTemplateRoot(
+    schema.templateRoot,
+    TEMPLATE_RESOURCE_NAME
+  );
+
   return {
     apiProject,
     featureName,
     featureNamePascal: names(featureName).className,
     skipFormat: schema.skipFormat ?? false,
+    templateRoot,
     templateApiRoot: joinPathFragments(
-      'packages/resources',
-      TEMPLATE_RESOURCE_NAME,
+      templateRoot,
       `${TEMPLATE_RESOURCE_NAME}-api`
     ),
     templateFeatureRoot: joinPathFragments(
-      'packages/resources',
-      TEMPLATE_RESOURCE_NAME,
+      templateRoot,
       `${TEMPLATE_RESOURCE_NAME}-api`,
       'src/features',
       TEMPLATE_FEATURE_NAME
@@ -105,6 +114,8 @@ function normalizeOptions(schema: ApiFeatureGeneratorSchema): NormalizedOptions 
 }
 
 function ensureTemplateFeatureExists(tree: Tree, options: NormalizedOptions): void {
+  ensureTemplateRootExists(tree, options.templateRoot, TEMPLATE_RESOURCE_NAME);
+
   const requiredPaths = [
     joinPathFragments(options.templateFeatureRoot, 'controller.ts'),
     joinPathFragments(options.templateFeatureRoot, 'service.ts'),

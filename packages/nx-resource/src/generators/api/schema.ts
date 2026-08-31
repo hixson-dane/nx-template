@@ -5,6 +5,7 @@ export interface ApiGeneratorSchema {
   scope?: string;
   featureName?: string;
   directory?: string;
+  templateRoot?: string;
   apiPort?: number;
   skipFormat?: boolean;
 }

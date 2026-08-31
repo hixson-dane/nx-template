@@ -14,6 +14,10 @@ import { applicationGenerator as nodeApplicationGenerator } from '@nx/node';
 import { applicationGenerator as reactApplicationGenerator } from '@nx/react';
 
 import { ResourceGeneratorSchema } from './schema';
+import {
+  ensureTemplateRootExists,
+  resolveTemplateRoot,
+} from '../shared/template-root';
 
 const TEMPLATE_RESOURCE_NAME = 'knowledge-graph';
 const TEMPLATE_FEATURE_NAME = 'ping';
@@ -109,7 +113,10 @@ function normalizeOptions(schema: ResourceGeneratorSchema): NormalizedOptions {
   const uiPort = normalizePort(schema.uiPort ?? 4200, 'uiPort');
 
   const resourceRoot = joinPathFragments(directory, resourceName);
-  const templateRoot = joinPathFragments(directory, TEMPLATE_RESOURCE_NAME);
+  const templateRoot = resolveTemplateRoot(
+    schema.templateRoot,
+    TEMPLATE_RESOURCE_NAME
+  );
 
   const apiProject = `${resourceName}-api`;
   const apiE2eProject = `${resourceName}-api-e2e`;
@@ -164,14 +171,7 @@ function ensureResourceDoesNotExist(tree: Tree, options: NormalizedOptions): voi
 }
 
 function ensureCanonicalTemplateExists(tree: Tree, options: NormalizedOptions): void {
-  if (!tree.exists(options.templateRoot)) {
-    throw new Error(
-      [
-        `Canonical template resource not found at "${options.templateRoot}".`,
-        `This generator expects an existing "${TEMPLATE_RESOURCE_NAME}" resource as the deterministic source template.`,
-      ].join(' ')
-    );
-  }
+  ensureTemplateRootExists(tree, options.templateRoot, TEMPLATE_RESOURCE_NAME);
 }
 
 function ensureDeterministicWorkspaceConfig(tree: Tree): void {
@@ -192,6 +192,9 @@ function ensureDeterministicWorkspaceConfig(tree: Tree): void {
       return json;
     }
 
+    const resourceApiE2ePattern =
+      /^packages\/resources\/[^/]+\/[^/]+-api-e2e\/\*\*\/\*$/;
+
     json.plugins = json.plugins.map((plugin: string | Record<string, unknown>) => {
       if (
         typeof plugin !== 'object' ||
@@ -204,7 +207,9 @@ function ensureDeterministicWorkspaceConfig(tree: Tree): void {
         ? (plugin['exclude'] as string[])
         : [];
       const normalized = existingExclude.filter(
-        (entry) => entry !== 'packages/resources/knowledge-graph/knowledge-graph-api-e2e/**/*'
+        (entry) =>
+          entry !== 'packages/resources/knowledge-graph/knowledge-graph-api-e2e/**/*' &&
+          !resourceApiE2ePattern.test(entry)
       );
 
       if (!normalized.includes('packages/resources/*/*-api-e2e/**/*')) {
@@ -342,7 +347,7 @@ function getCanonicalTemplateInstructions(
     { from: 'knowledge-graph-api/Dockerfile', to: `${options.apiProject}/Dockerfile` },
     { from: 'knowledge-graph-api/eslint.config.mjs', to: `${options.apiProject}/eslint.config.mjs` },
     { from: 'knowledge-graph-api/jest.config.cjs', to: `${options.apiProject}/jest.config.cjs` },
-    { from: 'knowledge-graph-api/package.json', to: `${options.apiProject}/package.json` },
+    { from: 'knowledge-graph-api/package.template.json', to: `${options.apiProject}/package.json` },
     { from: 'knowledge-graph-api/tsconfig.app.json', to: `${options.apiProject}/tsconfig.app.json` },
     { from: 'knowledge-graph-api/tsconfig.json', to: `${options.apiProject}/tsconfig.json` },
     { from: 'knowledge-graph-api/tsconfig.spec.json', to: `${options.apiProject}/tsconfig.spec.json` },
@@ -367,7 +372,7 @@ function getCanonicalTemplateInstructions(
     { from: 'knowledge-graph-api-e2e/.spec.swcrc', to: `${options.apiE2eProject}/.spec.swcrc` },
     { from: 'knowledge-graph-api-e2e/eslint.config.mjs', to: `${options.apiE2eProject}/eslint.config.mjs` },
     { from: 'knowledge-graph-api-e2e/jest.config.cjs', to: `${options.apiE2eProject}/jest.config.cjs` },
-    { from: 'knowledge-graph-api-e2e/package.json', to: `${options.apiE2eProject}/package.json` },
+    { from: 'knowledge-graph-api-e2e/package.template.json', to: `${options.apiE2eProject}/package.json` },
     { from: 'knowledge-graph-api-e2e/tsconfig.json', to: `${options.apiE2eProject}/tsconfig.json` },
     {
       from: 'knowledge-graph-api-e2e/src/knowledge-graph-api/knowledge-graph-api.spec.ts',
@@ -387,7 +392,7 @@ function getCanonicalTemplateInstructions(
     },
 
     { from: 'knowledge-graph-models/eslint.config.mjs', to: `${options.modelsProject}/eslint.config.mjs` },
-    { from: 'knowledge-graph-models/package.json', to: `${options.modelsProject}/package.json` },
+    { from: 'knowledge-graph-models/package.template.json', to: `${options.modelsProject}/package.json` },
     { from: 'knowledge-graph-models/README.md', to: `${options.modelsProject}/README.md` },
     { from: 'knowledge-graph-models/tsconfig.json', to: `${options.modelsProject}/tsconfig.json` },
     { from: 'knowledge-graph-models/tsconfig.lib.json', to: `${options.modelsProject}/tsconfig.lib.json` },
@@ -401,7 +406,7 @@ function getCanonicalTemplateInstructions(
     { from: 'knowledge-graph-sdk/.swcrc', to: `${options.sdkProject}/.swcrc` },
     { from: 'knowledge-graph-sdk/eslint.config.mjs', to: `${options.sdkProject}/eslint.config.mjs` },
     { from: 'knowledge-graph-sdk/jest.config.cjs', to: `${options.sdkProject}/jest.config.cjs` },
-    { from: 'knowledge-graph-sdk/package.json', to: `${options.sdkProject}/package.json` },
+    { from: 'knowledge-graph-sdk/package.template.json', to: `${options.sdkProject}/package.json` },
     { from: 'knowledge-graph-sdk/README.md', to: `${options.sdkProject}/README.md` },
     { from: 'knowledge-graph-sdk/rollup.config.cjs', to: `${options.sdkProject}/rollup.config.cjs` },
     { from: 'knowledge-graph-sdk/tsconfig.json', to: `${options.sdkProject}/tsconfig.json` },
@@ -424,7 +429,7 @@ function getCanonicalTemplateInstructions(
     { from: 'knowledge-graph-ui/eslint.config.mjs', to: `${options.uiProject}/eslint.config.mjs` },
     { from: 'knowledge-graph-ui/index.html', to: `${options.uiProject}/index.html` },
     { from: 'knowledge-graph-ui/jest.config.cts', to: `${options.uiProject}/jest.config.cjs` },
-    { from: 'knowledge-graph-ui/package.json', to: `${options.uiProject}/package.json` },
+    { from: 'knowledge-graph-ui/package.template.json', to: `${options.uiProject}/package.json` },
     { from: 'knowledge-graph-ui/tsconfig.app.json', to: `${options.uiProject}/tsconfig.app.json` },
     { from: 'knowledge-graph-ui/tsconfig.json', to: `${options.uiProject}/tsconfig.json` },
     { from: 'knowledge-graph-ui/tsconfig.spec.json', to: `${options.uiProject}/tsconfig.spec.json` },
@@ -439,7 +444,7 @@ function getCanonicalTemplateInstructions(
     { from: 'knowledge-graph-ui/src/assets/.gitkeep', to: `${options.uiProject}/src/assets/.gitkeep` },
 
     { from: 'knowledge-graph-ui-e2e/eslint.config.mjs', to: `${options.uiE2eProject}/eslint.config.mjs` },
-    { from: 'knowledge-graph-ui-e2e/package.json', to: `${options.uiE2eProject}/package.json` },
+    { from: 'knowledge-graph-ui-e2e/package.template.json', to: `${options.uiE2eProject}/package.json` },
     { from: 'knowledge-graph-ui-e2e/playwright.config.mts', to: `${options.uiE2eProject}/playwright.config.mts` },
     { from: 'knowledge-graph-ui-e2e/tsconfig.json', to: `${options.uiE2eProject}/tsconfig.json` },
     { from: 'knowledge-graph-ui-e2e/src/example.spec.ts', to: `${options.uiE2eProject}/src/example.spec.ts` },
@@ -467,6 +472,8 @@ function buildReplacements(
     ['knowledge-graph-sdk', options.sdkProject],
     ['knowledge-graph-ui-e2e', options.uiE2eProject],
     ['knowledge-graph-ui', options.uiProject],
+    ['../../../../../tsconfig.base.json', '../../../../tsconfig.base.json'],
+    ['../../../../../jest.preset.js', '../../../../jest.preset.js'],
     ['jest.config.cts', 'jest.config.cjs'],
     ['KnowledgeGraph', options.resourceNamePascal],
     ['Ping', options.featureNamePascal],
@@ -512,6 +519,10 @@ function enforcePackageMetadata(tree: Tree, options: NormalizedOptions): void {
     json.private = true;
     json.nx ??= {};
     json.nx.name = options.apiProject;
+    const scripts = toRecord(json.scripts);
+    scripts.build = 'tsc --build tsconfig.app.json';
+    scripts.serve = 'node dist/main.js';
+    json.scripts = sortRecord(scripts);
     json.dependencies = sortRecord({
       [scopedModels]: `^${DEFAULT_VERSION}`,
       express: expressVersion,
@@ -634,6 +645,21 @@ function sortRecord(values: Record<string, string>): Record<string, string> {
   return Object.fromEntries(
     Object.entries(values).sort(([left], [right]) => left.localeCompare(right))
   );
+}
+
+function toRecord(value: unknown): Record<string, string> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return {};
+  }
+
+  const output: Record<string, string> = {};
+  for (const [key, item] of Object.entries(value)) {
+    if (typeof item === 'string') {
+      output[key] = item;
+    }
+  }
+
+  return output;
 }
 
 function toScopedPackageName(scope: string, name: string): string {

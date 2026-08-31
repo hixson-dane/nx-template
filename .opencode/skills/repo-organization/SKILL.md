@@ -26,11 +26,11 @@ For SDK features, use:
 
 ## Shared contract wiring
 
-- Keep request and response contracts in `knowledge-graph-models` using Zod schemas.
+- Keep request and response contracts in `<resource>-models` using Zod schemas.
 - Export both schema values and inferred TypeScript types from the models package.
 - Import contract schemas in API controllers and services to validate request and response payloads.
 - Import the same response schemas in SDK helpers to validate inbound API payloads.
-- Re-export only TypeScript types from SDK `features/<feature>/models.ts` using `export type { ... } from '@dev-portal/knowledge-graph-models'`.
+- Re-export only TypeScript types from SDK `features/<feature>/models.ts` using `export type { ... } from '@<scope>/<resource>-models'`.
 - Do not re-export Zod schemas from the SDK public API unless SDK consumers explicitly need runtime validation.
 - Add workspace dependencies so API and SDK both consume the models package rather than duplicating DTOs.
 

@@ -1,0 +1,10 @@
+{
+  "name": "@dev-portal/knowledge-graph-sdk",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/index.esm.js",
+  "types": "./dist/index.esm.d.ts",
+  "dependencies": {
+    "@dev-portal/knowledge-graph-models": "^0.0.1"
+  }
+}

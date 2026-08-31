@@ -36,6 +36,10 @@
       "description": "Base directory where resources live.",
       "default": "packages/resources"
     },
+    "templateRoot": {
+      "type": "string",
+      "description": "Optional override path for canonical template source. Defaults to packages/nx-resource/templates/knowledge-graph."
+    },
     "apiPort": {
       "type": "number",
       "description": "Default api runtime port.",

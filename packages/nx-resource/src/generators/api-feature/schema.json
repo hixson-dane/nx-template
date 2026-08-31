@@ -23,6 +23,10 @@
         "index": 1
       }
     },
+    "templateRoot": {
+      "type": "string",
+      "description": "Optional override path for canonical template source. Defaults to packages/nx-resource/templates/knowledge-graph."
+    },
     "skipFormat": {
       "type": "boolean",
       "description": "Skip file formatting.",

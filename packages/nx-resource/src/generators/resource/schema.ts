@@ -4,6 +4,7 @@ export interface ResourceGeneratorSchema {
   scope?: string;
   featureName?: string;
   directory?: string;
+  templateRoot?: string;
   apiPort?: number;
   uiPort?: number;
   skipFormat?: boolean;

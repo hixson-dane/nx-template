@@ -27,13 +27,15 @@
           "buildDepsName": "build-deps",
           "watchDepsName": "watch-deps"
         }
-      }
+      },
+      "exclude": ["packages/nx-resource/templates/**"]
     },
     {
       "plugin": "@nx/eslint/plugin",
       "options": {
         "targetName": "lint"
-      }
+      },
+      "exclude": ["packages/nx-resource/templates/**"]
     },
     {
       "plugin": "@nx/jest/plugin",
@@ -42,7 +44,8 @@
       },
       "exclude": [
         "packages/resources/*/*-api-e2e/**/*",
-        "packages/resources/schema/schema-api-e2e/**/*"
+        "packages/resources/schema/schema-api-e2e/**/*",
+        "packages/nx-resource/templates/**"
       ]
     },
     {
@@ -54,7 +57,8 @@
         "runTarget": {
           "name": "docker:run"
         }
-      }
+      },
+      "exclude": ["packages/nx-resource/templates/**"]
     },
     {
       "plugin": "@nx/vite/plugin",
@@ -67,13 +71,15 @@
         "typecheckTargetName": "typecheck",
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
-      }
+      },
+      "exclude": ["packages/nx-resource/templates/**"]
     },
     {
       "plugin": "@nx/playwright/plugin",
       "options": {
         "targetName": "e2e"
-      }
+      },
+      "exclude": ["packages/nx-resource/templates/**"]
     },
     {
       "plugin": "@nx/rollup/plugin",
@@ -81,7 +87,8 @@
         "buildTargetName": "build",
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
-      }
+      },
+      "exclude": ["packages/nx-resource/templates/**"]
     }
   ],
   "analytics": false,
